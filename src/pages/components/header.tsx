@@ -1,21 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Menu,
   Search,
   ShoppingCart,
   MessageSquareHeartIcon,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Header() {
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="bg-white h-36 text-mainGray p-8 flex justify-between">
-      <div className="text-3xl">Jóias de Jade</div>
+      <div className="w-72">
+        <Image
+          src="/transparent-logo2.png"
+          alt="Imagem do Banner"
+          width={2500}
+          height={400}
+          className="rounded-lg"
+        />
+      </div>
 
       <div className="relative mx-auto text-mainGreen text-lg">
         <input
@@ -40,7 +63,10 @@ export default function Header() {
       </div>
 
       {isMenuOpen && (
-        <nav className="absolute top-16 right-2 mt-2 bg-mainGreen text-white text-xl z-50 w-32 p-2 rounded">
+        <nav
+          ref={menuRef}
+          className="absolute top-16 right-2 mt-2 bg-mainGreen text-white text-xl z-50 w-32 p-2 rounded"
+        >
           <a href="#" className="block py-1">
             Inicio
           </a>
